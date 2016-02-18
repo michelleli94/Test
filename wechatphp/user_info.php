@@ -1,52 +1,29 @@
 <?php
 require_once "lib.php";
 
-/*echo "<pre>";
-var_dump($_REQUEST);
-echo "</pre>";
-exit;*/
+
 if(isset($_GET['code'])){
-  //p($_GET['code']); //  data received for the first time - step1
+    //  data received for the first time - step1
   	define("CODE", $_GET['code']);
-   //get the ACCESS_TOKEN/APPID for authorization
+    //get the ACCESS_TOKEN/APPID for authorization
   	$get_webPage_access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".APPID."&secret=".APPSECRET."&code=".CODE."&grant_type=authorization_code";
   	
   	//retrieve access_toke、 refresh_token、openid、 scope from webpage
   	$json_result = getCatch($get_webPage_access_token_url);  // step2
   	$arr_result = json_decode($json_result, true); //retrieve access_token
-   //p($arr_result);
-   //exit;
-   //	echo $arr_result['refresh_token'];
-   // echo "<br />"."===============================刷新后的access_token相关信息==========step3================================"."<br />";   
-    /*define("REFRESH_TOKEN", $arr_result['refresh_token']);
-    $refresh_access_token_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=".APPID."&grant_type=refresh_token&refresh_token=".REFRESH_TOKEN;
-  	$new_access_token_by_refresh_json = getCatch($refresh_access_token_url);
-    $new_access_token_by_refresh_arr = json_decode($new_access_token_by_refresh_json, true); 
-  	p($new_access_token_by_refresh_arr);// */
-  	
-   //echo "<br />"."===============================刷新后的access_token相关信息结束==========step3================================"."<br />";   
-   // exit;
-   //retrieve user information (scope shoulb be snsapi_userinfo)  step4
+   
+    //retrieve user information (scope shoulb be snsapi_userinfo)  step3
     define("ACCESS_TOKEN", $arr_result['access_token']);
-    //define("ACCESS_TOKEN", $new_access_token_by_refresh_arr['access_token']);
+    
   	$webPageUserInfoGet_url = "https://api.weixin.qq.com/sns/userinfo?access_token=".ACCESS_TOKEN."&openid=".$arr_result['openid'];
   	$userInfo_json = getCatch($webPageUserInfoGet_url);
   	$userInfo_arr = json_decode($userInfo_json, true);
   	
-  //	p($userInfo_arr);
-  //	exit;
-  
-    //获取132*132大小的图片链接地址
+    //get 132*132 image address
     $headimgurl =  $userInfo_arr['headimgurl']; 
   	$headimgurl_tmpl =  substr($headimgurl, 0, -1);  	
   	$headimgurl = $headimgurl_tmpl."132";
     
-  //  exit;
-  //p($userInfo_arr);
-	
-  // echo '<img src="'.$userInfo_arr["headimgurl"].'/">';
-  	
-  
 }else{
     echo "NO CODE";
 }
@@ -85,13 +62,6 @@ if(isset($_GET['code'])){
         <div style="width:132px ; height: 132px; background-color: #fbfbfb; border: 1px solid #b8b8b8;">
             <img src="<?php echo $headimgurl; ?>" alt="image">
         </div>
-    <!--<div data-role="fieldcontain">
-            <label for="textinput1">
-                headimageurl：
-            </label>
-				<input name="" id="textinput1" placeholder="" value="<?php //echo $headimgurl;?>" data-mini="true"
-            type="text">
-        </div>-->
         <div data-role="fieldcontain">
             <label for="textinput1">
                 User's unique ID, openid：
